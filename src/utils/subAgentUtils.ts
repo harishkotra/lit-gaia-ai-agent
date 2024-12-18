@@ -2,14 +2,17 @@ import OpenAI from 'openai';
 import { ethers } from "ethers";
 import { getPermittedTools } from './contractUtils';
 
-// Initialize OpenAI with environment check
+// Initialize Gaia's Public Node
 const initializeOpenAI = () => {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.GAIA_API_KEY;
   if (!apiKey) {
     console.error("❌ OPENAI_API_KEY is not set in environment");
     process.exit(1);
   }
-  return new OpenAI({ apiKey });
+  return new OpenAI({ 
+    apiKey,
+    baseURL: 'https://llama8b.gaia.domains',
+  });
 };
 
 const openai = initializeOpenAI();
@@ -73,7 +76,7 @@ export async function analyzeUserIntentAndMatchAction(
     const permittedActions = await getPermittedTools(pkpPermissions, provider);
     
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "llama",
       messages: [
         {
           role: "system",
